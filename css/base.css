@@ -384,6 +384,15 @@ input[type="time"].input {
   flex-shrink: 0;
 }
 
+.theme-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 .project-badge {
   display: inline-flex;
   align-items: center;

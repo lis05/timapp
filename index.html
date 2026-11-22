@@ -13,7 +13,8 @@
         if (pref === 'system') {
           resolved = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
-        document.documentElement.setAttribute('data-theme', resolved === 'dark' ? 'dark' : 'light');
+        var allowed = ['light', 'dark', 'clockify', 'clockify-dark'];
+        document.documentElement.setAttribute('data-theme', allowed.indexOf(resolved) >= 0 ? resolved : 'light');
       } catch (e) {}
     })();
   </script>

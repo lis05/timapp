@@ -112,3 +112,129 @@
   --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-strong);
   --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-strong);
 }
+
+/* Clockify Light Theme */
+[data-theme="clockify"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg-app: #f2f6f8;
+  --bg-surface: #ffffff;
+  --bg-subtle: #e4eaee;
+  --bg-hover: #edf3f6;
+  --bg-active: #e1f5fe;
+  --bg-elevated: #ffffff;
+
+  /* Borders */
+  --border: #c6d2d9;
+  --border-strong: #b0bec5;
+
+  /* Typography */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-muted: #78909c;
+
+  /* Clockify Signature Sky-Blue Primary Accent */
+  --accent: #03a9f4;
+  --accent-hover: #0288d1;
+  --accent-fg: #ffffff;
+
+  /* Semantic Accents */
+  --danger: #f44336;
+  --danger-hover: #d32f2f;
+  --danger-subtle: rgba(244, 67, 54, 0.12);
+  --success: #03a9f4;
+  --success-subtle: rgba(3, 169, 244, 0.14);
+  --warning: #ff9800;
+  --warning-subtle: rgba(255, 152, 0, 0.14);
+  --timer-live: #03a9f4;
+
+  /* Heatmap Intensity Palette */
+  --heat-0: #e4eaee;
+  --heat-1: #b3e5fc;
+  --heat-2: #4fc3f7;
+  --heat-3: #03a9f4;
+  --heat-4: #0277bd;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(38, 50, 56, 0.06);
+  --shadow-md: 0 4px 12px rgba(38, 50, 56, 0.1);
+  --shadow-popover: 0 10px 28px -4px rgba(38, 50, 56, 0.16), 0 0 0 1px var(--border);
+  --shadow-modal: 0 20px 48px -12px rgba(38, 50, 56, 0.24), 0 0 0 1px var(--border);
+}
+
+/* Clockify Dark Theme */
+[data-theme="clockify-dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg-app: #12191d;
+  --bg-surface: #1d272c;
+  --bg-subtle: #263238;
+  --bg-hover: #2c3940;
+  --bg-active: #34444d;
+  --bg-elevated: #222e34;
+
+  /* Borders */
+  --border: #37474f;
+  --border-strong: #455a64;
+
+  /* Typography */
+  --text-primary: #eceff1;
+  --text-secondary: #b0bec5;
+  --text-muted: #78909c;
+
+  /* Clockify Signature Sky-Blue Primary Accent */
+  --accent: #03a9f4;
+  --accent-hover: #29b6f6;
+  --accent-fg: #ffffff;
+
+  /* Semantic Accents */
+  --danger: #f44336;
+  --danger-hover: #e53935;
+  --danger-subtle: rgba(244, 67, 54, 0.16);
+  --success: #29b6f6;
+  --success-subtle: rgba(41, 182, 246, 0.16);
+  --warning: #ffb74d;
+  --warning-subtle: rgba(255, 183, 77, 0.16);
+  --timer-live: #29b6f6;
+
+  /* Heatmap Intensity Palette */
+  --heat-0: #263238;
+  --heat-1: #01579b;
+  --heat-2: #0277bd;
+  --heat-3: #039be5;
+  --heat-4: #29b6f6;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-strong);
+  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-strong);
+}
+
+/* Clockify Signature Sidebar & Active Accents */
+[data-theme="clockify"] .nav-item.is-active,
+[data-theme="clockify-dark"] .nav-item.is-active {
+  color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+[data-theme="clockify"] .nav-item.is-active {
+  background: #e1f5fe;
+}
+
+[data-theme="clockify-dark"] .nav-item.is-active {
+  background: rgba(3, 169, 244, 0.14);
+}
+
+[data-theme="clockify"] .segmented-btn.is-active,
+[data-theme="clockify-dark"] .segmented-btn.is-active {
+  color: var(--accent);
+}
+
+[data-theme="clockify"] .brand-mark,
+[data-theme="clockify-dark"] .brand-mark {
+  background: var(--accent);
+  color: #ffffff;
+}

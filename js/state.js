@@ -73,7 +73,9 @@
   }
 
   function resolveTheme(themePref) {
-    if (themePref === 'dark' || themePref === 'light') return themePref;
+    if (themePref === 'dark' || themePref === 'light' || themePref === 'clockify' || themePref === 'clockify-dark') {
+      return themePref;
+    }
     if (typeof window !== 'undefined' && window.matchMedia) {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
@@ -620,7 +622,10 @@
 
     toggleLightDarkTheme: function () {
       var resolved = resolveTheme(data.settings.theme);
-      var next = resolved === 'dark' ? 'light' : 'dark';
+      var next;
+      if (resolved === 'clockify') next = 'clockify-dark';
+      else if (resolved === 'clockify-dark') next = 'clockify';
+      else next = resolved === 'dark' ? 'light' : 'dark';
       return App.state.updateSettings({ theme: next });
     },
 

@@ -14,6 +14,12 @@
         '</option>';
     }).join('');
 
+    var themeOptions = (App.THEMES || []).map(function (th) {
+      return '<option value="' + App.utils.escapeHtml(th.id) + '"' + (settings.theme === th.id ? ' selected' : '') + '>' +
+        App.utils.escapeHtml(App.i18n.t(th.labelKey)) +
+        '</option>';
+    }).join('');
+
     root.innerHTML =
       '<div class="view-container">' +
       '<div class="view-header">' +
@@ -35,11 +41,7 @@
       '<span class="settings-row-desc">' + App.utils.escapeHtml(App.i18n.t('settings.themeDesc')) + '</span>' +
       '</div>' +
       '<div class="settings-row-control">' +
-      '<div class="segmented">' +
-      '<button type="button" class="segmented-btn' + (settings.theme === 'system' ? ' is-active' : '') + '" data-set-theme="system">' + App.icon('monitor', 'icon-sm') + '<span>' + App.utils.escapeHtml(App.i18n.t('settings.themeSystem')) + '</span></button>' +
-      '<button type="button" class="segmented-btn' + (settings.theme === 'light' ? ' is-active' : '') + '" data-set-theme="light">' + App.icon('sun', 'icon-sm') + '<span>' + App.utils.escapeHtml(App.i18n.t('settings.themeLight')) + '</span></button>' +
-      '<button type="button" class="segmented-btn' + (settings.theme === 'dark' ? ' is-active' : '') + '" data-set-theme="dark">' + App.icon('moon', 'icon-sm') + '<span>' + App.utils.escapeHtml(App.i18n.t('settings.themeDark')) + '</span></button>' +
-      '</div>' +
+      '<select class="select" data-set-theme>' + themeOptions + '</select>' +
       '</div>' +
       '</div>' +
 
@@ -209,12 +211,9 @@
   }
 
   function wireSettingsEvents(root) {
-    var themeBtns = root.querySelectorAll('[data-set-theme]');
-    for (var i = 0; i < themeBtns.length; i++) {
-      themeBtns[i].addEventListener('click', function () {
-        App.state.updateSettings({ theme: this.getAttribute('data-set-theme') });
-      });
-    }
+    root.querySelector('[data-set-theme]').addEventListener('change', function () {
+      App.state.updateSettings({ theme: this.value });
+    });
 
     root.querySelector('[data-set-lang]').addEventListener('change', function () {
       App.state.updateSettings({ language: this.value });

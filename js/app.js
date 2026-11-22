@@ -18,6 +18,7 @@
     var ui = App.state.getUi();
     var active = App.state.getActiveTimer();
     var resolvedTheme = App.state.getResolvedTheme();
+    var isDarkTheme = resolvedTheme === 'dark' || resolvedTheme === 'clockify-dark';
 
     var navHtml = NAV_ITEMS.map(function (item) {
       var isActive = ui.currentView === item.id;
@@ -62,7 +63,7 @@
       '<span class="sidebar-footer-info" title="' + App.utils.escapeHtml(App.db.getBackendName()) + '">' + App.utils.escapeHtml(App.i18n.t('nav.localOnly')) + '</span>' +
       '<div class="sidebar-footer-actions">' +
       '<button type="button" class="btn btn-ghost btn-icon-sm" data-quick-backup title="' + App.utils.escapeHtml(App.i18n.t('nav.quickBackup')) + '">' + App.icon('download', 'icon-sm') + '</button>' +
-      '<button type="button" class="btn btn-ghost btn-icon-sm" data-quick-theme title="' + App.utils.escapeHtml(App.i18n.t('nav.quickTheme')) + '">' + App.icon(resolvedTheme === 'dark' ? 'sun' : 'moon', 'icon-sm') + '</button>' +
+      '<button type="button" class="btn btn-ghost btn-icon-sm" data-quick-theme title="' + App.utils.escapeHtml(App.i18n.t('nav.quickTheme')) + '">' + App.icon(isDarkTheme ? 'sun' : 'moon', 'icon-sm') + '</button>' +
       '</div>' +
       '</div>';
 
@@ -83,8 +84,30 @@
       sidebarStop.addEventListener('click', function () { App.state.stopTimer(); });
     }
 
-    sidebar.querySelector('[data-quick-theme]').addEventListener('click', function () {
-      App.state.toggleLightDarkTheme();
+    var quickThemeBtn = sidebar.querySelector('[data-quick-theme]');
+    quickThemeBtn.addEventListener('click', function () {
+      var curTheme = App.state.getSettings().theme;
+      App.components.openPopover(quickThemeBtn, function (pop, close) {
+        pop.innerHTML = '<div class="popover-list">' + (App.THEMES || []).map(function (th) {
+          var isSel = th.id === curTheme;
+          return '<button type="button" class="popover-item' + (isSel ? ' is-selected' : '') + '" data-theme-choice="' + App.utils.escapeHtml(th.id) + '">' +
+            '<span class="popover-item-left">' +
+            '<span class="theme-swatch" style="background:linear-gradient(135deg,' + App.utils.escapeHtml(th.bg) + ' 50%,' + App.utils.escapeHtml(th.accent) + ' 50%);"></span>' +
+            '<span class="popover-item-label">' + App.utils.escapeHtml(App.i18n.t(th.labelKey)) + '</span>' +
+            '</span>' +
+            (isSel ? App.icon('check', 'icon-sm') : '') +
+            '</button>';
+        }).join('') + '</div>';
+
+        var items = pop.querySelectorAll('[data-theme-choice]');
+        for (var j = 0; j < items.length; j++) {
+          items[j].addEventListener('click', function () {
+            var id = this.getAttribute('data-theme-choice');
+            close();
+            App.state.updateSettings({ theme: id });
+          });
+        }
+      });
     });
 
     sidebar.querySelector('[data-quick-backup]').addEventListener('click', function () {

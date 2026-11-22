@@ -7,6 +7,14 @@
   App.locales = App.locales || {};
   App.views = App.views || {};
 
+  App.THEMES = [
+    { id: 'system', labelKey: 'settings.themeSystem', bg: '#e4e4e7', accent: '#18181b' },
+    { id: 'light', labelKey: 'settings.themeLight', bg: '#fafafa', accent: '#18181b' },
+    { id: 'dark', labelKey: 'settings.themeDark', bg: '#111113', accent: '#fafafa' },
+    { id: 'clockify', labelKey: 'settings.themeClockify', bg: '#f2f6f8', accent: '#03a9f4' },
+    { id: 'clockify-dark', labelKey: 'settings.themeClockifyDark', bg: '#1d272c', accent: '#03a9f4' }
+  ];
+
   App.PROJECT_COLORS = [
     '#2563eb', // Royal Blue
     '#f97316', // Vivid Orange
