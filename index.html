@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timapp — Time Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2318181b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' fill='%2318181b' stroke='none'/%3E%3Ccircle cx='12' cy='12' r='6.5' stroke='%23fafafa'/%3E%3Cpolyline points='12 8.5 12 12 14.5 13.5' stroke='%23fafafa'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        var pref = localStorage.getItem('timapp_theme_cache') || 'system';
+        var resolved = pref;
+        if (pref === 'system') {
+          resolved = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', resolved === 'dark' ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/views.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="app-sidebar"></aside>
+    <main class="main-area" id="app-main"></main>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="popover-root"></div>
+  <div id="toast-root" class="toast-container"></div>
+  <div id="chart-tooltip" class="chart-tooltip"></div>
+
+  <script src="js/namespace.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/locales/uk.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/views/tracker.js"></script>
+  <script src="js/views/calendar.js"></script>
+  <script src="js/views/analytics.js"></script>
+  <script src="js/views/manage.js"></script>
+  <script src="js/views/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

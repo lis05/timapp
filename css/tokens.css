@@ -1,0 +1,114 @@
+/* Timapp Design Tokens — Crisp Minimal (Linear / Vercel style) */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg-app: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f4f4f5;
+  --bg-hover: #ececee;
+  --bg-active: #e4e4e7;
+  --bg-elevated: #ffffff;
+
+  /* Borders */
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  /* Typography */
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+
+  /* Monochrome High-Contrast Primary Accent */
+  --accent: #18181b;
+  --accent-hover: #27272a;
+  --accent-fg: #fafafa;
+
+  /* Semantic Accents */
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-subtle: rgba(239, 68, 68, 0.1);
+  --success: #10b981;
+  --success-subtle: rgba(16, 185, 129, 0.12);
+  --warning: #f59e0b;
+  --warning-subtle: rgba(245, 158, 11, 0.12);
+  --timer-live: #10b981;
+
+  /* Heatmap Intensity Palette (Light) */
+  --heat-0: #f4f4f5;
+  --heat-1: #d1fae5;
+  --heat-2: #6ee7b7;
+  --heat-3: #10b981;
+  --heat-4: #047857;
+
+  /* Fonts */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, Menlo, Monaco, Consolas, monospace;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-md: 0 4px 12px rgba(9, 9, 11, 0.07);
+  --shadow-popover: 0 10px 30px -5px rgba(9, 9, 11, 0.12), 0 0 0 1px var(--border);
+  --shadow-modal: 0 20px 50px -12px rgba(9, 9, 11, 0.22), 0 0 0 1px var(--border);
+
+  /* Layout & Motion */
+  --sidebar-width: 232px;
+  --transition: 120ms ease;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg-app: #0a0a0b;
+  --bg-surface: #111113;
+  --bg-subtle: #18181b;
+  --bg-hover: #222226;
+  --bg-active: #2a2a30;
+  --bg-elevated: #161619;
+
+  /* Borders */
+  --border: #27272a;
+  --border-strong: #3f3f46;
+
+  /* Typography */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  /* Monochrome High-Contrast Primary Accent */
+  --accent: #fafafa;
+  --accent-hover: #e4e4e7;
+  --accent-fg: #09090b;
+
+  /* Semantic Accents */
+  --danger: #f87171;
+  --danger-hover: #ef4444;
+  --danger-subtle: rgba(248, 113, 113, 0.14);
+  --success: #34d399;
+  --success-subtle: rgba(52, 211, 153, 0.14);
+  --warning: #fbbf24;
+  --warning-subtle: rgba(251, 191, 36, 0.14);
+  --timer-live: #34d399;
+
+  /* Heatmap Intensity Palette (Dark) */
+  --heat-0: #18181b;
+  --heat-1: #064e3b;
+  --heat-2: #047857;
+  --heat-3: #10b981;
+  --heat-4: #34d399;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-strong);
+  --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-strong);
+}
