@@ -573,12 +573,15 @@
 
           '<div class="entry-project-cell">' +
           (p
-            ? '<span class="project-badge" style="color:' + App.utils.escapeHtml(p.color) + ';"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span></span>'
+            ? '<span class="entry-project-static"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span style="color:' + App.utils.escapeHtml(p.color) + ';">' + App.utils.escapeHtml(p.name) + '</span></span>'
             : '<span class="muted" style="font-size:12.5px;">' + App.utils.escapeHtml(App.i18n.t('common.noProject')) + '</span>') +
           '</div>' +
 
           '<div class="entry-tags-cell">' +
           entryTags.map(function (t) { return '<span class="tag-pill">' + App.utils.escapeHtml(t.name) + '</span>'; }).join('') +
+          '<button type="button" class="entry-tags-trigger" data-group-tags="' + App.utils.escapeHtml(tg.key) + '" data-group-entry-ids="' + App.utils.escapeHtml(tg.entries.map(function (en) { return en.id; }).join(',')) + '" title="' + App.utils.escapeHtml(App.i18n.t('common.tags')) + '">' +
+          App.icon('tag', 'icon-sm') + (entryTags.length ? '' : '<span>+</span>') +
+          '</button>' +
           '</div>' +
 
           '<div class="entry-time-cell">' +
@@ -673,10 +676,26 @@
     var groupRows = listWrap.querySelectorAll('[data-group-toggle]');
     for (var g = 0; g < groupRows.length; g++) {
       groupRows[g].addEventListener('click', function (evt) {
-        if (evt.target.closest('[data-group-continue]')) return;
+        if (evt.target.closest('[data-group-continue]') || evt.target.closest('[data-group-tags]')) return;
         var gKey = this.getAttribute('data-group-toggle');
         expandedGroups[gKey] = !expandedGroups[gKey];
         renderTrackerList(listWrap);
+      });
+    }
+
+    var groupTagBtns = listWrap.querySelectorAll('[data-group-tags]');
+    for (var gt = 0; gt < groupTagBtns.length; gt++) {
+      groupTagBtns[gt].addEventListener('click', function (evt) {
+        evt.stopPropagation();
+        var btn = this;
+        var entryIds = (btn.getAttribute('data-group-entry-ids') || '').split(',').filter(Boolean);
+        var first = entryIds.length ? entriesMap[entryIds[0]] : null;
+        var currentTags = first ? (first.tagIds || []).slice() : [];
+        App.components.openTagPicker(btn, currentTags, function (ids) {
+          for (var k = 0; k < entryIds.length; k++) {
+            App.state.updateEntry(entryIds[k], { tagIds: ids.slice() });
+          }
+        });
       });
     }
 
