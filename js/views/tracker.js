@@ -80,7 +80,7 @@
 
       '<button type="button" class="tracker-picker-btn' + (proj ? ' has-value' : '') + '" data-bar-proj>' +
       (proj
-        ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(proj.color) + '"></span><span class="tracker-picker-label">' + App.utils.escapeHtml(proj.name) + '</span>'
+        ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(proj.color) + '"></span><span class="tracker-picker-label" style="color:' + App.utils.escapeHtml(proj.color) + ';">' + App.utils.escapeHtml(proj.name) + '</span>'
         : App.icon('folder', 'icon-sm') + '<span class="tracker-picker-label">' + App.utils.escapeHtml(App.i18n.t('tracker.selectProject')) + '</span>') +
       '</button>' +
 
@@ -429,7 +429,7 @@
       '<div class="entry-project-cell">' +
       '<button type="button" class="entry-project-trigger' + (p ? ' has-project' : '') + '" data-row-proj>' +
       (p
-        ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span>'
+        ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span style="color:' + App.utils.escapeHtml(p.color) + ';">' + App.utils.escapeHtml(p.name) + '</span>'
         : '<span class="muted">+ ' + App.utils.escapeHtml(App.i18n.t('common.project')) + '</span>') +
       '</button>' +
       '</div>' +
@@ -573,7 +573,7 @@
 
           '<div class="entry-project-cell">' +
           (p
-            ? '<span class="project-badge"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span></span>'
+            ? '<span class="project-badge" style="color:' + App.utils.escapeHtml(p.color) + ';"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span></span>'
             : '<span class="muted" style="font-size:12.5px;">' + App.utils.escapeHtml(App.i18n.t('common.noProject')) + '</span>') +
           '</div>' +
 

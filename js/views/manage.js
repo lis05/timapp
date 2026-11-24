@@ -161,7 +161,7 @@
             return '<tr data-proj-row="' + App.utils.escapeHtml(p.id) + '">' +
               '<td><div style="display:flex;align-items:center;gap:8px;font-weight:500;">' +
               '<span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span>' +
-              '<span>' + App.utils.escapeHtml(p.name) + '</span>' +
+              '<span style="color:' + App.utils.escapeHtml(p.color) + ';">' + App.utils.escapeHtml(p.name) + '</span>' +
               (p.archived ? '<span class="archived-badge">' + App.utils.escapeHtml(App.i18n.t('common.archived')) + '</span>' : '') +
               '</div></td>' +
               '<td class="mono">' + st.count + '</td>' +

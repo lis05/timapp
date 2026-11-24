@@ -130,7 +130,7 @@
           var isSel = p.id === selectedId;
           html += '<button type="button" class="popover-item' + (isSel ? ' is-selected' : '') + '" data-proj-id="' + App.utils.escapeHtml(p.id) + '">' +
             '<span class="popover-item-left"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span>' +
-            '<span class="popover-item-label">' + App.utils.escapeHtml(p.name) + '</span></span>' +
+            '<span class="popover-item-label" style="color:' + App.utils.escapeHtml(p.color) + ';">' + App.utils.escapeHtml(p.name) + '</span></span>' +
             (isSel ? App.icon('check', 'icon-sm') : '') +
             '</button>';
         }
@@ -469,7 +469,7 @@
           var proj = state.projectId ? App.state.getProjectById(state.projectId) : null;
           if (proj) {
             projBtn.innerHTML = '<span class="project-dot" style="background:' + App.utils.escapeHtml(proj.color) + '"></span>' +
-              '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + App.utils.escapeHtml(proj.name) + '</span>';
+              '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + App.utils.escapeHtml(proj.color) + ';">' + App.utils.escapeHtml(proj.name) + '</span>';
           } else {
             projBtn.innerHTML = App.icon('folder', 'icon-sm') + ' <span class="muted">' + App.utils.escapeHtml(App.i18n.t('common.noProject')) + '</span>';
           }

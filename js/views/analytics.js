@@ -335,7 +335,7 @@
         var isFiltered = an.projectIds.indexOf(it.id) >= 0;
         return '<div class="breakdown-item' + (isFiltered ? ' is-filtered' : '') + '" data-toggle-proj="' + App.utils.escapeHtml(it.id) + '">' +
           '<div class="breakdown-top">' +
-          '<span class="breakdown-name"><span class="project-dot" style="background:' + App.utils.escapeHtml(it.color) + '"></span><span>' + App.utils.escapeHtml(it.name) + '</span></span>' +
+          '<span class="breakdown-name"><span class="project-dot" style="background:' + App.utils.escapeHtml(it.color) + '"></span><span style="color:' + App.utils.escapeHtml(it.color) + ';">' + App.utils.escapeHtml(it.name) + '</span></span>' +
           '<span class="breakdown-metrics mono"><span>' + App.utils.escapeHtml(App.utils.formatDuration(it.ms, settings.durationFormat)) + '</span><span class="muted">' + it.percent.toFixed(0) + '%</span></span>' +
           '</div>' +
           '<div class="breakdown-bar-track"><div class="breakdown-bar-fill" style="width:' + it.percent.toFixed(1) + '%;background:' + App.utils.escapeHtml(it.color) + ';"></div></div>' +
@@ -377,7 +377,7 @@
         return '<tr data-report-entry="' + App.utils.escapeHtml(e.id) + '">' +
           '<td class="mono">' + App.utils.escapeHtml(App.utils.toDateKey(e.startTime)) + '</td>' +
           '<td>' + App.utils.escapeHtml(e.description || App.i18n.t('common.untitledTask')) + '</td>' +
-          '<td>' + (p ? '<span class="project-badge"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span>' + App.utils.escapeHtml(p.name) + '</span>' : '<span class="muted">—</span>') + '</td>' +
+          '<td>' + (p ? '<span class="project-badge" style="color:' + App.utils.escapeHtml(p.color) + ';"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span>' + App.utils.escapeHtml(p.name) + '</span>' : '<span class="muted">—</span>') + '</td>' +
           '<td>' + (tagNames.length ? tagNames.map(function (n) { return '<span class="tag-pill">' + App.utils.escapeHtml(n) + '</span>'; }).join(' ') : '<span class="muted">—</span>') + '</td>' +
           '<td class="mono muted">' + App.utils.escapeHtml(App.utils.formatTimeOfDay(e.startTime, settings.timeFormat) + '–' + App.utils.formatTimeOfDay(e.endTime, settings.timeFormat)) + '</td>' +
           '<td class="mono" style="text-align:right;font-weight:600;">' + App.utils.escapeHtml(App.utils.formatDuration(item.clippedMs, settings.durationFormat)) + '</td>' +
@@ -444,7 +444,7 @@
 
       '<div class="card kpi-card">' +
       '<span class="kpi-label">' + App.utils.escapeHtml(App.i18n.t('analytics.kpiTopProject')) + '</span>' +
-      '<div class="kpi-value-row"><span class="kpi-value" style="font-size:17px;">' + (topProj ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(topProj.color) + ';margin-right:6px;"></span>' + App.utils.escapeHtml(topProj.name) : '—') + '</span></div>' +
+      '<div class="kpi-value-row"><span class="kpi-value" style="font-size:17px;">' + (topProj ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(topProj.color) + ';margin-right:6px;"></span><span style="color:' + App.utils.escapeHtml(topProj.color) + ';">' + App.utils.escapeHtml(topProj.name) + '</span>' : '—') + '</span></div>' +
       '<span class="kpi-sub mono">' + (topProj ? App.utils.escapeHtml(App.utils.formatDuration(topProj.ms, settings.durationFormat) + ' (' + topProj.percent.toFixed(0) + '%)') : '&nbsp;') + '</span>' +
       '</div>' +
 
