@@ -92,7 +92,9 @@
       noTagsFound: 'Type a name and press Enter to create a tag',
       confirmDeleteTitle: 'Delete entry?',
       confirmDeleteMessage: 'Remove "{title}" ({duration})? This cannot be undone.',
-      recentTasksHeader: 'Recent tasks'
+      recentTasksHeader: 'Recent tasks',
+      expandGroup: 'Show {count} entries',
+      collapseGroup: 'Hide entries'
     },
     calendar: {
       title: 'Calendar',

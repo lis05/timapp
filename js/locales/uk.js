@@ -92,7 +92,9 @@
       noTagsFound: 'Введіть назву та натисніть Enter, щоб створити тег',
       confirmDeleteTitle: 'Видалити запис?',
       confirmDeleteMessage: 'Видалити «{title}» ({duration})? Цю дію не можна скасувати.',
-      recentTasksHeader: 'Останні завдання'
+      recentTasksHeader: 'Останні завдання',
+      expandGroup: 'Показати {count} записів',
+      collapseGroup: 'Сховати записи'
     },
     calendar: {
       title: 'Календар',

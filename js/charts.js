@@ -85,7 +85,7 @@
     }
 
     var slotW = plotW / buckets.length;
-    var barW = Math.min(34, Math.max(4, slotW * 0.62));
+    var barW = Math.min(68, Math.max(6, slotW * 0.78));
     var labelEvery = buckets.length > 26 ? Math.ceil(buckets.length / 12) : (buckets.length > 14 ? 2 : 1);
 
     for (var b = 0; b < buckets.length; b++) {

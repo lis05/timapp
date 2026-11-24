@@ -1,6 +1,8 @@
 (function (App) {
   'use strict';
 
+  var expandedGroups = {};
+
   var manualState = {
     dateKey: App.utils.toDateKey(new Date()),
     startStr: '09:00',
@@ -380,6 +382,79 @@
     });
   }
 
+  function buildDayTaskGroups(dayKey, dayEntries) {
+    var groups = [];
+    var map = {};
+    for (var i = 0; i < dayEntries.length; i++) {
+      var e = dayEntries[i];
+      var normDesc = (e.description || '').trim().toLowerCase();
+      var sortedTags = (e.tagIds || []).slice().sort().join(',');
+      var gKey = dayKey + '|' + normDesc + '|' + (e.projectId || '') + '|' + sortedTags;
+      var dur = Math.max(0, e.endTime - e.startTime);
+
+      if (!map[gKey]) {
+        map[gKey] = {
+          key: gKey,
+          entries: [e],
+          totalMs: dur,
+          minStart: e.startTime,
+          maxEnd: e.endTime
+        };
+        groups.push(map[gKey]);
+      } else {
+        var grp = map[gKey];
+        grp.entries.push(e);
+        grp.totalMs += dur;
+        if (e.startTime < grp.minStart) grp.minStart = e.startTime;
+        if (e.endTime > grp.maxEnd) grp.maxEnd = e.endTime;
+      }
+    }
+    return groups;
+  }
+
+  function renderEntryRowHtml(e, pMap, tMap, settings, extraClass) {
+    var p = e.projectId ? pMap[e.projectId] : null;
+    var entryTags = (e.tagIds || []).map(function (id) { return tMap[id]; }).filter(Boolean);
+    var durMs = Math.max(0, e.endTime - e.startTime);
+    var timeRangeText = App.utils.formatTimeOfDay(e.startTime, settings.timeFormat) + ' – ' + App.utils.formatTimeOfDay(e.endTime, settings.timeFormat);
+
+    return '<div class="entry-row' + (extraClass ? ' ' + extraClass : '') + '" data-entry-id="' + App.utils.escapeHtml(e.id) + '">' +
+      '<div class="entry-main">' +
+      '<button type="button" class="entry-title-btn' + (!e.description ? ' is-untitled' : '') + '" data-inline-title title="' + App.utils.escapeHtml(App.i18n.t('tracker.clickToEdit')) + '">' +
+      App.utils.escapeHtml(e.description || App.i18n.t('common.untitledTask')) +
+      '</button>' +
+      (e.notes ? '<span class="entry-notes-indicator" title="' + App.utils.escapeHtml(e.notes) + '">' + App.icon('note', 'icon-sm') + '</span>' : '') +
+      '</div>' +
+
+      '<div class="entry-project-cell">' +
+      '<button type="button" class="entry-project-trigger' + (p ? ' has-project' : '') + '" data-row-proj>' +
+      (p
+        ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span>'
+        : '<span class="muted">+ ' + App.utils.escapeHtml(App.i18n.t('common.project')) + '</span>') +
+      '</button>' +
+      '</div>' +
+
+      '<div class="entry-tags-cell">' +
+      entryTags.map(function (t) { return '<span class="tag-pill">' + App.utils.escapeHtml(t.name) + '</span>'; }).join('') +
+      '<button type="button" class="entry-tags-trigger" data-row-tags title="' + App.utils.escapeHtml(App.i18n.t('common.tags')) + '">' +
+      App.icon('tag', 'icon-sm') + (entryTags.length ? '' : '<span>+</span>') +
+      '</button>' +
+      '</div>' +
+
+      '<div class="entry-time-cell">' +
+      '<button type="button" class="entry-range-btn mono" data-row-edit>' + App.utils.escapeHtml(timeRangeText) + '</button>' +
+      '<span class="entry-duration mono">' + App.utils.escapeHtml(App.utils.formatDuration(durMs, settings.durationFormat)) + '</span>' +
+      '</div>' +
+
+      '<div class="entry-actions">' +
+      '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-continue title="' + App.utils.escapeHtml(App.i18n.t('tracker.continueTask')) + '">' + App.icon('play', 'icon-sm') + '</button>' +
+      '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-edit title="' + App.utils.escapeHtml(App.i18n.t('common.edit')) + '">' + App.icon('edit', 'icon-sm') + '</button>' +
+      '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-dup title="' + App.utils.escapeHtml(App.i18n.t('common.duplicate')) + '">' + App.icon('copy', 'icon-sm') + '</button>' +
+      '<button type="button" class="btn btn-danger-ghost btn-icon-sm" data-row-del title="' + App.utils.escapeHtml(App.i18n.t('common.delete')) + '">' + App.icon('trash', 'icon-sm') + '</button>' +
+      '</div>' +
+      '</div>';
+  }
+
   function renderTrackerList(listWrap) {
     var allEntries = App.state.getEntries();
     var filter = App.state.getUi().trackerFilter;
@@ -471,48 +546,59 @@
         '<span class="day-group-total mono">' + App.utils.escapeHtml(App.utils.formatDuration(grp.totalMs, settings.durationFormat)) + '</span>' +
         '</div>';
 
-      for (var r = 0; r < grp.entries.length; r++) {
-        var e = grp.entries[r];
-        var p = e.projectId ? pMap[e.projectId] : null;
-        var entryTags = (e.tagIds || []).map(function (id) { return tMap[id]; }).filter(Boolean);
-        var durMs = Math.max(0, e.endTime - e.startTime);
-        var timeRangeText = App.utils.formatTimeOfDay(e.startTime, settings.timeFormat) + ' – ' + App.utils.formatTimeOfDay(e.endTime, settings.timeFormat);
+      var taskGroups = buildDayTaskGroups(grp.key, grp.entries);
+      for (var r = 0; r < taskGroups.length; r++) {
+        var tg = taskGroups[r];
+        if (tg.entries.length === 1) {
+          groupsHtml += renderEntryRowHtml(tg.entries[0], pMap, tMap, settings, '');
+          continue;
+        }
 
-        groupsHtml += '<div class="entry-row" data-entry-id="' + App.utils.escapeHtml(e.id) + '">' +
+        var rep = tg.entries[0];
+        var isExp = Boolean(expandedGroups[tg.key]);
+        var p = rep.projectId ? pMap[rep.projectId] : null;
+        var entryTags = (rep.tagIds || []).map(function (id) { return tMap[id]; }).filter(Boolean);
+        var spanText = App.utils.formatTimeOfDay(tg.minStart, settings.timeFormat) + ' – ' + App.utils.formatTimeOfDay(tg.maxEnd, settings.timeFormat);
+        var toggleTitle = isExp
+          ? App.i18n.t('tracker.collapseGroup')
+          : App.i18n.t('tracker.expandGroup', { count: tg.entries.length });
+
+        groupsHtml += '<div class="entry-row entry-group-row" data-group-toggle="' + App.utils.escapeHtml(tg.key) + '" title="' + App.utils.escapeHtml(toggleTitle) + '">' +
           '<div class="entry-main">' +
-          '<button type="button" class="entry-title-btn' + (!e.description ? ' is-untitled' : '') + '" data-inline-title title="' + App.utils.escapeHtml(App.i18n.t('tracker.clickToEdit')) + '">' +
-          App.utils.escapeHtml(e.description || App.i18n.t('common.untitledTask')) +
-          '</button>' +
-          (e.notes ? '<span class="entry-notes-indicator" title="' + App.utils.escapeHtml(e.notes) + '">' + App.icon('note', 'icon-sm') + '</span>' : '') +
+          '<span class="entry-group-badge mono' + (isExp ? ' is-expanded' : '') + '">' + tg.entries.length + '</span>' +
+          '<span class="entry-group-title' + (!rep.description ? ' is-untitled' : '') + '">' +
+          App.utils.escapeHtml(rep.description || App.i18n.t('common.untitledTask')) +
+          '</span>' +
           '</div>' +
 
           '<div class="entry-project-cell">' +
-          '<button type="button" class="entry-project-trigger' + (p ? ' has-project' : '') + '" data-row-proj>' +
           (p
-            ? '<span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span>'
-            : '<span class="muted">+ ' + App.utils.escapeHtml(App.i18n.t('common.project')) + '</span>') +
-          '</button>' +
+            ? '<span class="project-badge"><span class="project-dot" style="background:' + App.utils.escapeHtml(p.color) + '"></span><span>' + App.utils.escapeHtml(p.name) + '</span></span>'
+            : '<span class="muted" style="font-size:12.5px;">' + App.utils.escapeHtml(App.i18n.t('common.noProject')) + '</span>') +
           '</div>' +
 
           '<div class="entry-tags-cell">' +
           entryTags.map(function (t) { return '<span class="tag-pill">' + App.utils.escapeHtml(t.name) + '</span>'; }).join('') +
-          '<button type="button" class="entry-tags-trigger" data-row-tags title="' + App.utils.escapeHtml(App.i18n.t('common.tags')) + '">' +
-          App.icon('tag', 'icon-sm') + (entryTags.length ? '' : '<span>+</span>') +
-          '</button>' +
           '</div>' +
 
           '<div class="entry-time-cell">' +
-          '<button type="button" class="entry-range-btn mono" data-row-edit>' + App.utils.escapeHtml(timeRangeText) + '</button>' +
-          '<span class="entry-duration mono">' + App.utils.escapeHtml(App.utils.formatDuration(durMs, settings.durationFormat)) + '</span>' +
+          '<span class="entry-range-btn mono">' + App.utils.escapeHtml(spanText) + '</span>' +
+          '<span class="entry-duration mono">' + App.utils.escapeHtml(App.utils.formatDuration(tg.totalMs, settings.durationFormat)) + '</span>' +
           '</div>' +
 
           '<div class="entry-actions">' +
-          '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-continue title="' + App.utils.escapeHtml(App.i18n.t('tracker.continueTask')) + '">' + App.icon('play', 'icon-sm') + '</button>' +
-          '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-edit title="' + App.utils.escapeHtml(App.i18n.t('common.edit')) + '">' + App.icon('edit', 'icon-sm') + '</button>' +
-          '<button type="button" class="btn btn-ghost btn-icon-sm" data-row-dup title="' + App.utils.escapeHtml(App.i18n.t('common.duplicate')) + '">' + App.icon('copy', 'icon-sm') + '</button>' +
-          '<button type="button" class="btn btn-danger-ghost btn-icon-sm" data-row-del title="' + App.utils.escapeHtml(App.i18n.t('common.delete')) + '">' + App.icon('trash', 'icon-sm') + '</button>' +
+          '<button type="button" class="btn btn-ghost btn-icon-sm" data-group-continue="' + App.utils.escapeHtml(rep.id) + '" title="' + App.utils.escapeHtml(App.i18n.t('tracker.continueTask')) + '">' + App.icon('play', 'icon-sm') + '</button>' +
+          '<span class="btn btn-ghost btn-icon-sm entry-group-chevron' + (isExp ? ' is-expanded' : '') + '" aria-hidden="true">' + App.icon('chevronDown', 'icon-sm') + '</span>' +
           '</div>' +
           '</div>';
+
+        if (isExp) {
+          groupsHtml += '<div class="entry-group-children">';
+          for (var c = 0; c < tg.entries.length; c++) {
+            groupsHtml += renderEntryRowHtml(tg.entries[c], pMap, tMap, settings, 'entry-child-row');
+          }
+          groupsHtml += '</div>';
+        }
       }
 
       groupsHtml += '</div>';
@@ -583,6 +669,33 @@
     var entriesMap = {};
     var entries = App.state.getEntries();
     for (var i = 0; i < entries.length; i++) entriesMap[entries[i].id] = entries[i];
+
+    var groupRows = listWrap.querySelectorAll('[data-group-toggle]');
+    for (var g = 0; g < groupRows.length; g++) {
+      groupRows[g].addEventListener('click', function (evt) {
+        if (evt.target.closest('[data-group-continue]')) return;
+        var gKey = this.getAttribute('data-group-toggle');
+        expandedGroups[gKey] = !expandedGroups[gKey];
+        renderTrackerList(listWrap);
+      });
+    }
+
+    var groupPlayBtns = listWrap.querySelectorAll('[data-group-continue]');
+    for (var gp = 0; gp < groupPlayBtns.length; gp++) {
+      groupPlayBtns[gp].addEventListener('click', function (evt) {
+        evt.stopPropagation();
+        var rep = entriesMap[this.getAttribute('data-group-continue')];
+        if (!rep) return;
+        App.state.startTimer({
+          description: rep.description,
+          projectId: rep.projectId,
+          tagIds: (rep.tagIds || []).slice(),
+          notes: rep.notes || ''
+        }).then(function () {
+          App.components.showToast(App.i18n.t('toasts.timerStarted'));
+        });
+      });
+    }
 
     var rows = listWrap.querySelectorAll('[data-entry-id]');
     for (var r = 0; r < rows.length; r++) {
