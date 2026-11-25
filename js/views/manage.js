@@ -66,6 +66,50 @@
     });
   }
 
+  function openMergeProjectModal(sourceProject, allProjects) {
+    var candidates = allProjects.filter(function (p) { return p.id !== sourceProject.id; });
+    if (!candidates.length) return;
+
+    App.components.openModal({
+      small: true,
+      render: function (modal, close) {
+        modal.innerHTML =
+          '<div class="modal-header">' +
+          '<h3 class="modal-title">' + App.utils.escapeHtml(App.i18n.t('manage.mergeProjectTitle', { name: sourceProject.name })) + '</h3>' +
+          '<button type="button" class="btn btn-ghost btn-icon" data-close>' + App.icon('x') + '</button>' +
+          '</div>' +
+          '<div class="modal-body">' +
+          '<p class="secondary" style="font-size:13px;">' + App.utils.escapeHtml(App.i18n.t('manage.mergeProjectDesc', { name: sourceProject.name })) + '</p>' +
+          '<div class="field">' +
+          '<label class="field-label">' + App.utils.escapeHtml(App.i18n.t('manage.mergeProjectTargetLabel')) + '</label>' +
+          '<select class="select" data-merge-target>' +
+          candidates.map(function (p) {
+            var label = p.name + (p.archived ? ' (' + App.i18n.t('common.archived') + ')' : '');
+            return '<option value="' + App.utils.escapeHtml(p.id) + '">' + App.utils.escapeHtml(label) + '</option>';
+          }).join('') +
+          '</select>' +
+          '</div>' +
+          '</div>' +
+          '<div class="modal-footer">' +
+          '<div class="modal-footer-right">' +
+          '<button type="button" class="btn btn-secondary" data-close>' + App.utils.escapeHtml(App.i18n.t('common.cancel')) + '</button>' +
+          '<button type="button" class="btn btn-primary" data-confirm-merge>' + App.utils.escapeHtml(App.i18n.t('manage.mergeProject')) + '</button>' +
+          '</div></div>';
+
+        var closeBtns = modal.querySelectorAll('[data-close]');
+        for (var i = 0; i < closeBtns.length; i++) closeBtns[i].addEventListener('click', close);
+
+        modal.querySelector('[data-confirm-merge]').addEventListener('click', function () {
+          var targetId = modal.querySelector('[data-merge-target]').value;
+          App.state.mergeProjects(sourceProject.id, targetId).then(function () {
+            close();
+            App.components.showToast(App.i18n.t('toasts.projectMerged'));
+          });
+        });
+      }
+    });
+  }
+
   function openMergeTagModal(sourceTag, allTags) {
     var candidates = allTags.filter(function (t) { return t.id !== sourceTag.id; });
     if (!candidates.length) return;
@@ -169,6 +213,7 @@
               '<td style="min-width:120px;"><div style="display:flex;align-items:center;gap:8px;"><div class="breakdown-bar-track" style="flex:1;"><div class="breakdown-bar-fill" style="width:' + pct.toFixed(1) + '%;background:' + App.utils.escapeHtml(p.color) + ';"></div></div><span class="mono muted" style="font-size:11.5px;width:36px;text-align:right;">' + pct.toFixed(0) + '%</span></div></td>' +
               '<td><div class="manage-row-actions">' +
               '<button type="button" class="btn btn-ghost btn-icon-sm" data-proj-edit title="' + App.utils.escapeHtml(App.i18n.t('common.edit')) + '">' + App.icon('edit', 'icon-sm') + '</button>' +
+              (projects.length > 1 ? '<button type="button" class="btn btn-ghost btn-icon-sm" data-proj-merge title="' + App.utils.escapeHtml(App.i18n.t('manage.mergeProject')) + '">' + App.icon('merge', 'icon-sm') + '</button>' : '') +
               '<button type="button" class="btn btn-ghost btn-icon-sm" data-proj-archive title="' + App.utils.escapeHtml(App.i18n.t(p.archived ? 'manage.restoreProject' : 'manage.archiveProject')) + '">' + App.icon('archive', 'icon-sm') + '</button>' +
               '<button type="button" class="btn btn-danger-ghost btn-icon-sm" data-proj-del title="' + App.utils.escapeHtml(App.i18n.t('common.delete')) + '">' + App.icon('trash', 'icon-sm') + '</button>' +
               '</div></td>' +
@@ -297,6 +342,7 @@
       }
 
       var pMap = App.state.getProjectsMap();
+      var allProjects = App.state.getProjects();
       var projRows = root.querySelectorAll('[data-proj-row]');
       for (var r = 0; r < projRows.length; r++) {
         (function (rowEl) {
@@ -307,6 +353,12 @@
           rowEl.querySelector('[data-proj-edit]').addEventListener('click', function () {
             openEditProjectModal(proj);
           });
+          var projMergeBtn = rowEl.querySelector('[data-proj-merge]');
+          if (projMergeBtn) {
+            projMergeBtn.addEventListener('click', function () {
+              openMergeProjectModal(proj, allProjects);
+            });
+          }
           rowEl.querySelector('[data-proj-archive]').addEventListener('click', function () {
             App.state.updateProject(id, { archived: !proj.archived }).then(function () {
               App.components.showToast(App.i18n.t('toasts.projectUpdated'));

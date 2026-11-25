@@ -513,6 +513,40 @@
       });
     },
 
+    mergeProjects: function (sourceId, targetId) {
+      if (!sourceId || !targetId || sourceId === targetId) return Promise.resolve();
+      if (!App.state.getProjectById(targetId)) return Promise.resolve();
+      data.projects = data.projects.filter(function (p) { return p.id !== sourceId; });
+      var promises = [App.db.deleteProject(sourceId)];
+      var entriesChanged = false;
+      var timerChanged = false;
+      var now = Date.now();
+      for (var i = 0; i < data.entries.length; i++) {
+        if (data.entries[i].projectId === sourceId) {
+          data.entries[i] = Object.assign({}, data.entries[i], { projectId: targetId, updatedAt: now });
+          promises.push(App.db.putEntry(data.entries[i]));
+          entriesChanged = true;
+        }
+      }
+      if (data.activeTimer && data.activeTimer.projectId === sourceId) {
+        data.activeTimer = Object.assign({}, data.activeTimer, { projectId: targetId });
+        promises.push(App.db.putMeta('activeTimer', data.activeTimer));
+        timerChanged = true;
+      }
+      if (ui.trackerDraft.projectId === sourceId) ui.trackerDraft.projectId = targetId;
+      if (ui.trackerFilter.projectId === sourceId) ui.trackerFilter.projectId = targetId;
+      if (ui.analytics.projectIds.indexOf(sourceId) >= 0) {
+        ui.analytics.projectIds = uniqueStrings(ui.analytics.projectIds.map(function (pid) {
+          return pid === sourceId ? targetId : pid;
+        }));
+      }
+      return Promise.all(promises).then(function () {
+        emit('projects:change', data.projects);
+        if (entriesChanged) emit('entries:change', data.entries);
+        if (timerChanged) emit('timer:update', data.activeTimer);
+      });
+    },
+
     addTag: function (input) {
       var name = (input.name || '').trim();
       if (!name) return Promise.resolve(null);
